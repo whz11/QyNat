@@ -1,6 +1,7 @@
 package com.qingyou.qynat.commom.handler;
 
 import com.qingyou.qynat.commom.protocol.NatMessage;
+import com.qingyou.qynat.commom.protocol.NatMessageHeader;
 import com.qingyou.qynat.commom.protocol.NatMessageType;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -38,7 +39,7 @@ public class QyNatCommonHandler extends ChannelInboundHandlerAdapter {
                 ctx.close();
             } else if (e.state() == IdleState.WRITER_IDLE) {
                 NatMessage natMessage = new NatMessage();
-                natMessage.getMessageHeader().setNatMessageType(NatMessageType.KEEPALIVE);
+                natMessage.setMessageHeader(new NatMessageHeader(NatMessageType.KEEPALIVE));
                 ctx.writeAndFlush(natMessage);
             }
         }

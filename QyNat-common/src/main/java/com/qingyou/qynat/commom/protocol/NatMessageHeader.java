@@ -12,4 +12,7 @@ public class NatMessageHeader {
     private long requestId;
     private String token;
     private NatMessageType natMessageType;
+    public NatMessageHeader(NatMessageType natMessageType){
+        this.natMessageType=natMessageType;
+    }
 }

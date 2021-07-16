@@ -1,22 +1,54 @@
 package com.qingyou.qynat.commom.codec;
 
 import com.qingyou.qynat.commom.protocol.NatMessage;
-import com.qingyou.qynat.commom.protocol.NatMessageHeader;
+import com.qingyou.qynat.commom.protocol.NatMessageType;
 import com.qingyou.qynat.commom.protocol.ProtostuffUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.util.CharsetUtil;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 
 /**
  * @author whz
  * @date 2021/7/15 19:45
  **/
 public class NatMessageEncoder extends MessageToByteEncoder<NatMessage> {
+//
+//    @Override
+//    protected void encode(ChannelHandlerContext channelHandlerContext, NatMessage natMessage, ByteBuf byteBuf) throws Exception {
+//        System.out.println("encode:"+natMessage);
+//        byte[] body = ProtostuffUtil.serialize(natMessage);
+//        byteBuf.writeInt(body.length);
+//        byteBuf.writeBytes(body);
+//    }
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, NatMessage natMessage, ByteBuf byteBuf) throws Exception {
-        byte[] body = ProtostuffUtil.serialize(natMessage);
-        byteBuf.writeInt(body.length);
-        byteBuf.writeBytes(body);
+    protected void encode(ChannelHandlerContext ctx, NatMessage msg, ByteBuf out) throws Exception {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+
+            NatMessageType natxMessageType = msg.getMessageHeader().getNatMessageType();
+            dataOutputStream.writeInt(natxMessageType.getCode());
+
+            JSONObject metaDataJson = new JSONObject(msg.getMetaData());
+            byte[] metaDataBytes = metaDataJson.toString().getBytes(CharsetUtil.UTF_8);
+            dataOutputStream.writeInt(metaDataBytes.length);
+            dataOutputStream.write(metaDataBytes);
+
+            if (msg.getData() != null && msg.getData().length > 0) {
+                dataOutputStream.write(msg.getData());
+            }
+
+            byte[] data = byteArrayOutputStream.toByteArray();
+            out.writeInt(data.length);
+            out.writeBytes(data);
+        }
+
     }
+
 }
