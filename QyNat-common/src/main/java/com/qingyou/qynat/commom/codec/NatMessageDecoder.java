@@ -1,9 +1,6 @@
 package com.qingyou.qynat.commom.codec;
 
-import com.qingyou.qynat.commom.protocol.NatMessageHeader;
-import com.qingyou.qynat.commom.protocol.NatMessageType;
-import com.qingyou.qynat.commom.protocol.ProtostuffUtil;
-import com.qingyou.qynat.commom.protocol.NatMessage;
+import com.qingyou.qynat.commom.protocol.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,7 +19,7 @@ import java.util.Map;
 public class NatMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
     private final Integer REQUEST_LENGTH = 4;
 
-//    @Override
+    //    @Override
 //    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> out) throws Exception {
 //        if (byteBuf.readableBytes() < REQUEST_LENGTH) {
 //            System.out.println("REQUEST_LENGTH：not enough");
@@ -43,27 +40,29 @@ public class NatMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
 //        System.out.println("decode:"+natMessage);
 //        out.add(natMessage);
 //    }
-@Override
-protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List out) throws Exception {
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List out) throws Exception {
 
-    int type = msg.readInt();
-    NatMessageType natMessageType = NatMessageType.valueOf(type);
-
-    int metaDataLength = msg.readInt();
-    CharSequence metaDataString = msg.readCharSequence(metaDataLength, CharsetUtil.UTF_8);
-    JSONObject jsonObject = new JSONObject(metaDataString.toString());
-    Map<String, Object> metaData = jsonObject.toMap();
-
-    byte[] data = null;
-    if (msg.isReadable()) {
-        data = ByteBufUtil.getBytes(msg);
+//    int type = msg.readInt();
+//    NatMessageType natMessageType = NatMessageType.valueOf(type);
+//
+//    int metaDataLength = msg.readInt();
+//    CharSequence metaDataString = msg.readCharSequence(metaDataLength, CharsetUtil.UTF_8);
+//    JSONObject jsonObject = new JSONObject(metaDataString.toString());
+//    Map<String, Object> metaData = jsonObject.toMap();
+//
+//    byte[] data = null;
+//    if (msg.isReadable()) {
+//        data = ByteBufUtil.getBytes(msg);
+//    }
+//
+//    NatMessage natxMessage = new NatMessage();
+//    natxMessage.setMessageHeader(new NatMessageHeader(natMessageType));
+//    natxMessage.setMetaData(metaData);
+//    natxMessage.setData(data);
+        int length = msg.readInt();
+        byte[] data = ByteBufUtil.getBytes(msg);
+        NatProto.NatMessage natMessage = NatProtoCodec.decode(data);
+        out.add(natMessage);
     }
-
-    NatMessage natxMessage = new NatMessage();
-    natxMessage.setMessageHeader(new NatMessageHeader(natMessageType));
-    natxMessage.setMetaData(metaData);
-    natxMessage.setData(data);
-
-    out.add(natxMessage);
-}
 }

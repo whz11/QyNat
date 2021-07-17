@@ -58,13 +58,13 @@ public class QyNatClientStarter {
 //            }
 
             QyNatClient client = new QyNatClient();
-           String serverAddress="1.116.186.185";
-           String serverPort="7777";
-           String password="123456";
-           String remotePort="8888";
-           String proxyAddress="localhost";
-           String proxyPort="8080";
-            client.connect(serverAddress, Integer.parseInt(serverPort), password, Integer.parseInt(remotePort), proxyAddress, Integer.parseInt(proxyPort));
+            String serverAddress = "localhost";
+            String serverPort = "7777";
+            String password = "123456";
+            String remotePort = "8888";
+            String proxyAddress = "localhost";
+            String proxyPort = "8080";
+            client.connect(serverAddress, serverPort, password, remotePort, proxyAddress, proxyPort);
         }
     }
 }

@@ -22,7 +22,7 @@ public class TcpConnection {
      * @param channelInitializer
      * @throws InterruptedException
      */
-    public ChannelFuture connect(String host, int port, ChannelInitializer channelInitializer) throws InterruptedException, IOException {
+    public ChannelFuture connect(String host, String port, ChannelInitializer channelInitializer) throws InterruptedException, IOException {
 
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -33,7 +33,7 @@ public class TcpConnection {
             b.option(ChannelOption.SO_KEEPALIVE, true);
             b.handler(channelInitializer);
 
-            Channel channel = b.connect(host, port).sync().channel();
+            Channel channel = b.connect(host, Integer.parseInt(port)).sync().channel();
             return channel.closeFuture().addListener(future -> workerGroup.shutdownGracefully());
         } catch (Exception e) {
             workerGroup.shutdownGracefully();

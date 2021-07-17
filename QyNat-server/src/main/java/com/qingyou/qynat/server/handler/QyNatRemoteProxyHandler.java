@@ -1,9 +1,9 @@
 package com.qingyou.qynat.server.handler;
 
+import com.qingyou.qynat.commom.codec.NatProtoCodec;
 import com.qingyou.qynat.commom.handler.QyNatCommonHandler;
-import com.qingyou.qynat.commom.protocol.NatMessage;
-import com.qingyou.qynat.commom.protocol.NatMessageHeader;
-import com.qingyou.qynat.commom.protocol.NatMessageType;
+import com.qingyou.qynat.commom.protocol.NatProto;
+
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
@@ -20,35 +20,59 @@ public class QyNatRemoteProxyHandler extends QyNatCommonHandler {
         this.proxyHandler = proxyHandler;
     }
 
+    //    @Override
+//    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+//        NatProto.NatMessage message = new NatProto.NatMessage();
+//        message.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.CONNECTED));
+//        HashMap<String, Object> metaData = new HashMap<>();
+//        metaData.put("channelId", ctx.channel().id().asLongText());
+//        message.setMetaData(metaData);
+//        proxyHandler.getCtx().writeAndFlush(message);
+//    }
+//
+//    @Override
+//    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+//        NatProto.NatMessage message = new NatProto.NatMessage();
+//        message.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.DISCONNECTED));
+//        HashMap<String, Object> metaData = new HashMap<>();
+//        metaData.put("channelId", ctx.channel().id().asLongText());
+//        message.setMetaData(metaData);
+//        proxyHandler.getCtx().writeAndFlush(message);
+//    }
+//
+//    @Override
+//    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+//        byte[] data = (byte[]) msg;
+//        NatProto.NatMessage message = new NatProto.NatMessage();
+//        message.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.DATA));
+//        message.setData(data);
+//        HashMap<String, Object> metaData = new HashMap<>();
+//        metaData.put("channelId", ctx.channel().id().asLongText());
+//        message.setMetaData(metaData);
+//        proxyHandler.getCtx().writeAndFlush(message);
+//    }
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        NatMessage message = new NatMessage();
-        message.setMessageHeader(new NatMessageHeader(NatMessageType.CONNECTED));
-        HashMap<String, Object> metaData = new HashMap<>();
+    public void channelActive(ChannelHandlerContext ctx) {
+        HashMap<String, String> metaData = new HashMap<>();
         metaData.put("channelId", ctx.channel().id().asLongText());
-        message.setMetaData(metaData);
+        NatProto.NatMessage message = NatProtoCodec.createNatMessage(0, NatProto.Type.CONNECTED, metaData, null);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        NatMessage message = new NatMessage();
-        message.setMessageHeader(new NatMessageHeader(NatMessageType.DISCONNECTED));
-        HashMap<String, Object> metaData = new HashMap<>();
+    public void channelInactive(ChannelHandlerContext ctx) {
+        HashMap<String, String> metaData = new HashMap<>();
         metaData.put("channelId", ctx.channel().id().asLongText());
-        message.setMetaData(metaData);
+        NatProto.NatMessage message = NatProtoCodec.createNatMessage(0, NatProto.Type.DISCONNECTED, metaData, null);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         byte[] data = (byte[]) msg;
-        NatMessage message = new NatMessage();
-        message.setMessageHeader(new NatMessageHeader(NatMessageType.DATA));
-        message.setData(data);
-        HashMap<String, Object> metaData = new HashMap<>();
+        HashMap<String, String> metaData = new HashMap<>();
         metaData.put("channelId", ctx.channel().id().asLongText());
-        message.setMetaData(metaData);
+        NatProto.NatMessage message = NatProtoCodec.createNatMessage(0, NatProto.Type.DATA, metaData, data);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 }
