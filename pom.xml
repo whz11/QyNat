@@ -12,6 +12,7 @@
         <module>QyNat-client</module>
         <module>QyNat-common</module>
         <module>QyNat-server</module>
+        <module>QyNat-client-GUI</module>
     </modules>
 
     <properties>

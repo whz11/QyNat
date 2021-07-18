@@ -8,8 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="QyNat-server" />
-        <module name="QyNat-client" />
         <module name="QyNat-common" />
+        <module name="QyNat-client-GUI" />
+        <module name="QyNat-client" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />

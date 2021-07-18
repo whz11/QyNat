@@ -70,6 +70,7 @@ public class QyNatRemoteProxyHandler extends QyNatCommonHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         byte[] data = (byte[]) msg;
+        System.out.println(msg);
         HashMap<String, String> metaData = new HashMap<>();
         metaData.put("channelId", ctx.channel().id().asLongText());
         NatProto.NatMessage message = NatProtoCodec.createNatMessage(0, NatProto.Type.DATA, metaData, data);

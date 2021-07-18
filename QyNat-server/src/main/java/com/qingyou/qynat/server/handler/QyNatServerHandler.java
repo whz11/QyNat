@@ -185,6 +185,7 @@ public class QyNatServerHandler extends QyNatCommonHandler {
                 });
 
                 metaData.put("success", "true");
+                metaData.put("mapping", addr + ":" + port);
                 this.port = port;
                 register = true;
                 System.out.println("Register success, start QyNat-server on addr: " + addr + ":" + port);
@@ -208,7 +209,7 @@ public class QyNatServerHandler extends QyNatCommonHandler {
      * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DATA
      */
     private void processData(NatProto.NatMessage natMessage) {
-        channels.writeAndFlush(natMessage.getData(), channel -> channel.id().asLongText().equals(natMessage.getMetaDataMap().get("channelId")));
+        channels.writeAndFlush(natMessage.getData().toByteArray(), channel -> channel.id().asLongText().equals(natMessage.getMetaDataMap().get("channelId")));
     }
 
     /**

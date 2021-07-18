@@ -22,7 +22,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.qingyou.qynat.client.QyNatClientStarter</mainClass>
+                  <mainClass>com.qingyou.qynat.QyNatClientStarter</mainClass>
                 </transformer>
               </transformers>
             </configuration>

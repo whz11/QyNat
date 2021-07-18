@@ -1,6 +1,9 @@
 /Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/protocol/NatMessage.java
+/Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/codec/NatProtoCodec.java
 /Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/protocol/NatMessageHeader.java
+/Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/protocol/com/qingyou/qynat/commom/protocol/NatProto.java
 /Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/exception/QyNatException.java
+/Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/protocol/NatProto.java
 /Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/codec/NatMessageDecoder.java
 /Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/protocol/NatMessageType.java
 /Users/apple/Documents/GitHub/QyNat/QyNat-common/src/main/java/com/qingyou/qynat/commom/protocol/TestMsg.java
