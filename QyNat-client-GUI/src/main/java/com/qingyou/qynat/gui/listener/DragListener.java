@@ -1,4 +1,4 @@
-package com.qingyou.qynat.gui.gui;
+package com.qingyou.qynat.gui.listener;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -27,9 +27,9 @@ public class DragListener implements EventHandler<MouseEvent> {
             yOffset = event.getSceneY();
         } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
             stage.setX(event.getScreenX() - xOffset);
-            if(event.getScreenY() - yOffset < 0) {
+            if (event.getScreenY() - yOffset < 0) {
                 stage.setY(0);
-            }else {
+            } else {
                 stage.setY(event.getScreenY() - yOffset);
             }
         }

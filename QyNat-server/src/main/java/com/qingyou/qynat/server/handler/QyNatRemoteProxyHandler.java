@@ -2,7 +2,7 @@ package com.qingyou.qynat.server.handler;
 
 import com.qingyou.qynat.commom.codec.NatProtoCodec;
 import com.qingyou.qynat.commom.handler.QyNatCommonHandler;
-import com.qingyou.qynat.commom.protocol.NatProto;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 
 import io.netty.channel.ChannelHandlerContext;
 
@@ -20,37 +20,7 @@ public class QyNatRemoteProxyHandler extends QyNatCommonHandler {
         this.proxyHandler = proxyHandler;
     }
 
-    //    @Override
-//    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//        NatProto.NatMessage message = new NatProto.NatMessage();
-//        message.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.CONNECTED));
-//        HashMap<String, Object> metaData = new HashMap<>();
-//        metaData.put("channelId", ctx.channel().id().asLongText());
-//        message.setMetaData(metaData);
-//        proxyHandler.getCtx().writeAndFlush(message);
-//    }
-//
-//    @Override
-//    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//        NatProto.NatMessage message = new NatProto.NatMessage();
-//        message.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.DISCONNECTED));
-//        HashMap<String, Object> metaData = new HashMap<>();
-//        metaData.put("channelId", ctx.channel().id().asLongText());
-//        message.setMetaData(metaData);
-//        proxyHandler.getCtx().writeAndFlush(message);
-//    }
-//
-//    @Override
-//    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//        byte[] data = (byte[]) msg;
-//        NatProto.NatMessage message = new NatProto.NatMessage();
-//        message.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.DATA));
-//        message.setData(data);
-//        HashMap<String, Object> metaData = new HashMap<>();
-//        metaData.put("channelId", ctx.channel().id().asLongText());
-//        message.setMetaData(metaData);
-//        proxyHandler.getCtx().writeAndFlush(message);
-//    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         HashMap<String, String> metaData = new HashMap<>();

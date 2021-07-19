@@ -2,10 +2,7 @@ package com.qingyou.qynat.client.handler;
 
 import com.qingyou.qynat.commom.codec.NatProtoCodec;
 import com.qingyou.qynat.commom.handler.QyNatCommonHandler;
-import com.qingyou.qynat.commom.protocol.NatMessage;
-import com.qingyou.qynat.commom.protocol.NatMessageHeader;
-import com.qingyou.qynat.commom.protocol.NatMessageType;
-import com.qingyou.qynat.commom.protocol.NatProto;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
@@ -16,38 +13,16 @@ import java.util.HashMap;
  **/
 public class QyNatLocalProxyHandler extends QyNatCommonHandler {
 
-    private QyNatCommonHandler proxyHandler;
-    private String remoteChannelId;
+    private final QyNatCommonHandler proxyHandler;
+    private final String remoteChannelId;
 
     public QyNatLocalProxyHandler(QyNatCommonHandler proxyHandler, String remoteChannelId) {
         this.proxyHandler = proxyHandler;
         this.remoteChannelId = remoteChannelId;
     }
 
-//    @Override
-//    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//        byte[] data = (byte[]) msg;
-//        NatMessage message = new NatMessage();
-//        message.setMessageHeader(new NatMessageHeader(NatMessageType.DATA));
-//        message.setData(data);
-//        HashMap<String, Object> metaData = new HashMap<>();
-//        metaData.put("channelId", remoteChannelId);
-//        message.setMetaData(metaData);
-//        proxyHandler.getCtx().writeAndFlush(message);
-//    }
-//
-//    @Override
-//    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//        NatMessage message = new NatMessage();
-//        message.setMessageHeader(new NatMessageHeader(NatMessageType.DISCONNECTED));
-//        HashMap<String, Object> metaData = new HashMap<>();
-//        metaData.put("channelId", remoteChannelId);
-//        message.setMetaData(metaData);
-//        proxyHandler.getCtx().writeAndFlush(message);
-//    }
-
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         byte[] data = (byte[]) msg;
         HashMap<String, String> metaData = new HashMap<>();
         metaData.put("channelId", remoteChannelId);
@@ -56,7 +31,7 @@ public class QyNatLocalProxyHandler extends QyNatCommonHandler {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         HashMap<String, String> metaData = new HashMap<>();
         metaData.put("channelId", remoteChannelId);
         NatProto.NatMessage message = NatProtoCodec.createNatMessage(0, NatProto.Type.DISCONNECTED, metaData, null);

@@ -13,8 +13,8 @@ public class QyNatServerStart {
         // args
         Options options = new Options();
         options.addOption("h", false, "Help");
-        options.addOption("p", true, "QyNat com.qingyou.qynat.server port");
-        options.addOption("pwd", true, "QyNat com.qingyou.qynat.server password");
+        options.addOption("p", true, "QyNat server port");
+        options.addOption("pwd", true, "QyNat server password");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -31,7 +31,7 @@ public class QyNatServerStart {
             QyNatServer server = new QyNatServer();
             server.start(port, password);
 
-            System.out.println("QyNat com.qingyou.qynat.server started on port " + port);
+            System.out.println("QyNat server started on port " + port);
         }
     }
 }

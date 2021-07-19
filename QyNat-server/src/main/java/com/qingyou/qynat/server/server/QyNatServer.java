@@ -1,12 +1,9 @@
 package com.qingyou.qynat.server.server;
 
-import com.qingyou.qynat.commom.codec.NatMessageDecoder;
-import com.qingyou.qynat.commom.codec.NatMessageEncoder;
-import com.qingyou.qynat.commom.protocol.NatProto;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 import com.qingyou.qynat.server.handler.QyNatServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
@@ -25,7 +22,7 @@ public class QyNatServer {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 QyNatServerHandler natServerHandler = new QyNatServerHandler(password);
-                ch.pipeline().addLast(//new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
+                ch.pipeline().addLast(
                         new ProtobufVarint32FrameDecoder(),//用于半包处理
                         //ProtobufDecoder解码器，参数是NatMessage，也就是需要接收到的消息解码为NatMessage类型的对象
                         new ProtobufDecoder(NatProto.NatMessage.getDefaultInstance()),

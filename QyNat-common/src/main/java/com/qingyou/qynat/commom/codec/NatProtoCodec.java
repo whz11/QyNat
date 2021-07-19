@@ -2,10 +2,8 @@ package com.qingyou.qynat.commom.codec;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.qingyou.qynat.commom.protocol.NatProto;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

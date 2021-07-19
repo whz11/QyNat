@@ -5,51 +5,32 @@ import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.*;
 import com.jfoenix.svg.SVGGlyph;
 import com.jfoenix.validation.RequiredFieldValidator;
+import com.qingyou.qynat.client.client.QyNatClient;
 import com.qingyou.qynat.commom.exception.QyNatException;
-import com.qingyou.qynat.gui.client.QyNatClient;
-import com.qingyou.qynat.gui.gui.DragListener;
-import com.qingyou.qynat.gui.gui.MainController;
+import com.qingyou.qynat.gui.listener.DragListener;
 import com.qingyou.qynat.gui.handler.QyNatClientHandler;
-import io.datafx.controller.flow.Flow;
-import io.datafx.controller.flow.container.DefaultFlowContainer;
-import io.datafx.controller.flow.context.FXMLViewFlowContext;
-import io.datafx.controller.flow.context.ViewFlowContext;
+import com.sun.xml.internal.ws.util.StringUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.xml.stream.events.Characters;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 /**
  * @author whz
@@ -57,21 +38,17 @@ import java.util.function.Predicate;
  **/
 public class Main extends Application {
 
-    private static final String FX_LABEL_FLOAT_TRUE = "-fx-label-float:true;";
     private static final String ERROR = "error";
     public static TextArea javafxTextArea;
-    private static final String SALES_DEPARTMENT = "Sales Depa";
-    private static final String IT_SUPPORT = "IT adsfasdfasfdasdfsadfsadfasdf Support";
-    private static final String ACCOUNTS_DEPARTMENT = "Accounts Department";
-    private static final String TAB_0 = "Tab 0";
-    private static final String TAB_01 = "Tab 01";
-    private static final String msg = TAB_0;
-    private final SecureRandom random = new SecureRandom();
+    private final String pattenIp = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\." +
+            "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +
+            "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +
+            "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)" +
+            ":([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-5]{2}[0-3][0-5])$";
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
-        QyNatClient client = new QyNatClient();
 
         final HBox root = new HBox();
         root.setMinWidth(1000);
@@ -90,7 +67,7 @@ public class Main extends Application {
         label.setMaxWidth(15);
         label.getStyleClass().add("button-flat");
         hBox.getChildren().add(label);
-        JFXTextField passwordText = new JFXTextField();
+        JFXPasswordField passwordText = new JFXPasswordField();
         passwordText.setPromptText("password");
         hBox.getChildren().add(passwordText);
         pane.getChildren().add(hBox);
@@ -119,33 +96,7 @@ public class Main extends Application {
         buttonBox.getChildren().add(button);
         button.getStyleClass().add("button-raised-on");
         button.setOnAction(e -> {
-            try {
-                if (button.getText().equals("CONNECT")) {
-                    String password = getText(stage, pane, 0);
-                    String serverAddr = getText(stage, pane, 1);
-                    String proxyAddr = getText(stage, pane, 2);
-                    String remotePort = getText(stage, pane, 3);
-                    String serverPort = serverAddr.split(":")[1];
-                    String serverAddress = serverAddr.split(":")[0];
-                    String proxyPort = proxyAddr.split(":")[1];
-                    String proxyAddress = proxyAddr.split(":")[0];
-                    System.out.println(serverAddr + "::" + serverPort);
-                    button.getStyleClass().remove("button-raised-on");
-                    button.getStyleClass().add("button-raised-off");
-                    button.setText("CLOSE");
-                    timeline.play();
-                    client.connect(serverAddress, serverPort, password, remotePort, proxyAddress, proxyPort);
-                } else {
-                    button.getStyleClass().remove("button-raised-off");
-                    button.getStyleClass().add("button-raised-on");
-                    button.setText("CONNECT");
-                    timeline.setCycleCount(1);
-                    System.exit(0);
-                }
-
-            } catch (Exception qe) {
-                qe.printStackTrace();
-            }
+            buttonAction(button, stage, pane, timeline);
         });
         pane.getChildren().add(buttonBox);
         final VBox pane1 = new VBox();
@@ -182,6 +133,45 @@ public class Main extends Application {
 
     }
 
+    public void buttonAction(JFXButton button, Stage stage, VBox pane, Timeline timeline) {
+        try {
+            if (button.getText().equals("CONNECT")) {
+                String password = getText(stage, pane, 0);
+                String serverAddr = getText(stage, pane, 1);
+                String proxyAddr = getText(stage, pane, 2);
+                String remotePort = getText(stage, pane, 3);
+                String serverPort = serverAddr.split(":")[1];
+                String serverAddress = serverAddr.split(":")[0];
+                String proxyPort = proxyAddr.split(":")[1];
+                String proxyAddress = proxyAddr.split(":")[0];
+                System.out.println(serverAddr + "::" + serverPort);
+                button.getStyleClass().remove("button-raised-on");
+                button.getStyleClass().add("button-raised-off");
+                button.setText("CLOSE");
+                timeline.play();
+                new Thread(() -> {
+                    QyNatClient client = new QyNatClient();
+                    try {
+                        client.connect(serverAddress, serverPort, new QyNatClientHandler(remotePort, password,
+                                proxyAddress, serverAddress, proxyPort));
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+
+            } else {
+                button.getStyleClass().remove("button-raised-off");
+                button.getStyleClass().add("button-raised-on");
+                button.setText("CONNECT");
+                timeline.setCycleCount(1);
+                System.exit(0);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void getDialog(Stage stage, String text) {
         updateTextAreaContentStatic(text + "未输入或格式有误！");
         JFXDialogLayout layout = new JFXDialogLayout();
@@ -196,17 +186,35 @@ public class Main extends Application {
     }
 
     public String getText(Stage stage, VBox pane, int index) throws QyNatException {
+        if (index == 0) {
+            return ((JFXPasswordField) (((HBox) (pane.getChildren().get(index))).getChildren().get(1))).getText().trim();
+        }
         String text = ((JFXTextField) (((HBox) (pane.getChildren().get(index))).getChildren().get(1))).getText().trim();
-        if (index != 0 && ("".equals(text) || text.length() == 0)) {
+        if ("".equals(text) || text.length() == 0) {
             getDialog(stage, getLabel(pane, index));
             throw new QyNatException("未输入");
         } else if (index == 1 || index == 2) {
-            if (!text.contains(":")) {
+            if (!isIp(text) && !text.startsWith("localhost")) {
                 getDialog(stage, getLabel(pane, index));
                 throw new QyNatException("输入格式有误");
             }
+        } else if (index == 3) {
+            for (int i = 0; i < text.length(); i++) {
+                char ch = text.charAt(i);
+                if (!Character.isDigit(ch) && ch != '.' && ch != ':') {
+                    getDialog(stage, getLabel(pane, index));
+                    throw new QyNatException("输入格式有误");
+                }
+            }
         }
         return text;
+    }
+
+    public boolean isIp(String text) {
+        if (text != null && !text.isEmpty()) {
+            return text.matches(pattenIp);
+        }
+        return false;
     }
 
     public String getLabel(VBox pane, int index) {
@@ -245,14 +253,9 @@ public class Main extends Application {
 
     public static void updateTextAreaContentStatic(String text) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        javafxTextArea.setText(javafxTextArea.getText() + "\n" + df.format(LocalDateTime.now()) + "\n" + text + "\n");
+        javafxTextArea.appendText("\n" + df.format(LocalDateTime.now()) + "\n" + text + "\n");
     }
 
-    public void updateTextAreaContent(String text) {
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        javafxTextArea.setText(javafxTextArea.getText() + "\n" + df.format(LocalDateTime.now()) + " " + text);
-        System.out.println(df.format(LocalDateTime.now()));
-    }
 
     public static void main(String[] args) {
         launch(args);

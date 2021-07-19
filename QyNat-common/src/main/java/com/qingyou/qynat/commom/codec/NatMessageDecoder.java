@@ -1,16 +1,12 @@
 package com.qingyou.qynat.commom.codec;
 
-import com.qingyou.qynat.commom.protocol.*;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import io.netty.util.CharsetUtil;
-import org.json.JSONObject;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author whz

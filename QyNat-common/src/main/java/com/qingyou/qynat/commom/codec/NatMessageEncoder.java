@@ -1,17 +1,9 @@
 package com.qingyou.qynat.commom.codec;
 
-import com.qingyou.qynat.commom.protocol.NatMessage;
-import com.qingyou.qynat.commom.protocol.NatMessageType;
-import com.qingyou.qynat.commom.protocol.NatProto;
-import com.qingyou.qynat.commom.protocol.ProtostuffUtil;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import io.netty.util.CharsetUtil;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 
 /**
  * @author whz

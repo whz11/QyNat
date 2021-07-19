@@ -2,6 +2,7 @@ package com.qingyou.qynat.client;
 
 
 import com.qingyou.qynat.client.client.QyNatClient;
+import com.qingyou.qynat.client.handler.QyNatClientHandler;
 import org.apache.commons.cli.*;
 
 /**
@@ -64,7 +65,8 @@ public class QyNatClientStarter {
             String remotePort = "8888";
             String proxyAddress = "localhost";
             String proxyPort = "8080";
-            client.connect(serverAddress, serverPort, password, remotePort, proxyAddress, proxyPort);
+            client.connect(serverAddress, serverPort, new QyNatClientHandler(remotePort, password,
+                    proxyAddress, serverAddress, proxyPort));
         }
     }
 }

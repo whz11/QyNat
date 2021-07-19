@@ -1,7 +1,7 @@
 package com.qingyou.qynat.client.client;
 
-import com.qingyou.qynat.client.handler.QyNatClientHandler;
-import com.qingyou.qynat.commom.protocol.NatProto;
+import com.qingyou.qynat.commom.handler.QyNatCommonHandler;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
@@ -17,15 +17,18 @@ import java.io.IOException;
  * @date 2021/7/16 01:06
  **/
 public class QyNatClient {
-    public void connect(String serverAddress, String serverPort, String password, String remotePort, String proxyAddress, String proxyPort) throws IOException, InterruptedException {
+
+    public QyNatClient() {
+
+    }
+
+    public <T extends QyNatCommonHandler> void connect(String serverAddress, String serverPort, T natClientHandler) throws IOException, InterruptedException {
 
         TcpConnection natConnection = new TcpConnection();
         ChannelFuture future = natConnection.connect(serverAddress, serverPort, new ChannelInitializer<SocketChannel>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
-                QyNatClientHandler natClientHandler = new QyNatClientHandler(remotePort, password,
-                        proxyAddress, serverAddress, proxyPort);
-                ch.pipeline().addLast(//new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
+            public void initChannel(SocketChannel ch) {
+                ch.pipeline().addLast(
                         new ProtobufVarint32FrameDecoder(),//用于半包处理
                         //ProtobufDecoder解码器，参数是NatMessage，也就是需要接收到的消息解码为NatMessage类型的对象
                         new ProtobufDecoder(NatProto.NatMessage.getDefaultInstance()),
@@ -34,12 +37,11 @@ public class QyNatClient {
                         new IdleStateHandler(60, 30, 0), natClientHandler);
             }
         });
-
         // channel close retry connect
         future.addListener(future1 -> new Thread(() -> {
             while (true) {
                 try {
-                    connect(serverAddress, serverPort, password, remotePort, proxyAddress, proxyPort);
+                    connect(serverAddress, serverPort, natClientHandler);
                     break;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -52,4 +54,5 @@ public class QyNatClient {
             }
         }).start());
     }
+
 }

@@ -3,7 +3,7 @@ package com.qingyou.qynat.server.handler;
 import com.qingyou.qynat.commom.codec.NatProtoCodec;
 import com.qingyou.qynat.commom.exception.QyNatException;
 import com.qingyou.qynat.commom.handler.QyNatCommonHandler;
-import com.qingyou.qynat.commom.protocol.NatProto;
+import com.qingyou.qynat.commom.protocol.proto.NatProto;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;

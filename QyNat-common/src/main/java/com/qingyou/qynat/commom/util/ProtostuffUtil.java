@@ -1,4 +1,4 @@
-package com.qingyou.qynat.commom.protocol;
+package com.qingyou.qynat.commom.util;
 
 
 import io.protostuff.LinkedBuffer;
