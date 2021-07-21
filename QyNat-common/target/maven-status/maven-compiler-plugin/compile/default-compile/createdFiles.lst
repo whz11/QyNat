@@ -1,9 +1,0 @@
-com/qingyou/qynat/commom/protocol/ProtostuffUtil.class
-com/qingyou/qynat/commom/handler/QyNatCommonHandler.class
-com/qingyou/qynat/commom/codec/NatMessageEncoder.class
-com/qingyou/qynat/commom/protocol/NatMessage.class
-com/qingyou/qynat/commom/exception/QyNatException.class
-com/qingyou/qynat/commom/protocol/NatMessageType.class
-com/qingyou/qynat/commom/protocol/TestMsg.class
-com/qingyou/qynat/commom/codec/NatMessageDecoder.class
-com/qingyou/qynat/commom/protocol/NatMessageHeader.class
