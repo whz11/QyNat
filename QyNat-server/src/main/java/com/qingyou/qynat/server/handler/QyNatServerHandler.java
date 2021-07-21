@@ -36,98 +36,6 @@ public class QyNatServerHandler extends QyNatCommonHandler {
         this.password = password;
     }
 
-//    @Override
-//    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//        NatProto.NatMessage NatProto.NatMessage = (NatProto.NatMessage) msg;
-//        System.out.println(msg);
-//        NatProto.NatMessageHeader header = NatProto.NatMessage.getMessageHeader();
-//        NatProto.NatMessageType type = header.getNatProto.NatMessageType();
-//        if (type == NatProto.NatMessageType.REGISTER) {
-//            processRegister(NatProto.NatMessage);
-//        } else if (register) {
-//            if (type == NatProto.NatMessageType.DISCONNECTED) {
-//                processDisconnected(NatProto.NatMessage);
-//            } else if (type == NatProto.NatMessageType.DATA) {
-//                processData(NatProto.NatMessage);
-//            } else if (type == NatProto.NatMessageType.KEEPALIVE) {
-//                // 心跳包, 不处理
-//            } else {
-//                throw new QyNatException("Unknown type: " + type);
-//            }
-//        } else {
-//            ctx.close();
-//        }
-//    }
-//
-//    @Override
-//    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//        remoteConnectionServer.close();
-//        if (register) {
-//            System.out.println("Stop com.qingyou.qynat.server on port: " + port);
-//        }
-//    }
-//
-//    /**
-//     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.REGISTER
-//     */
-//    private void processRegister(NatProto.NatMessage NatProto.NatMessage) {
-//        HashMap<String, Object> metaData = new HashMap<>();
-//
-//        String password = NatProto.NatMessage.getMetaData().get("password").toString();
-//        if (this.password != null && !this.password.equals(password)) {
-//            metaData.put("success", false);
-//            metaData.put("reason", "Token is wrong");
-//        } else {
-//            int port = (int) NatProto.NatMessage.getMetaData().get("port");
-//
-//            try {
-//
-//                QyNatServerHandler thisHandler = this;
-//                remoteConnectionServer.bind(port, new ChannelInitializer<SocketChannel>() {
-//                    @Override
-//                    public void initChannel(SocketChannel ch) throws Exception {
-//                        ch.pipeline().addLast(new ByteArrayDecoder(), new ByteArrayEncoder(), new QyNatRemoteProxyHandler(thisHandler));
-//                        channels.add(ch);
-//                    }
-//                });
-//
-//                metaData.put("success", true);
-//                this.port = port;
-//                register = true;
-//                System.out.println("Register success, start com.qingyou.qynat.server on port: " + port);
-//            } catch (Exception e) {
-//                metaData.put("success", false);
-//                metaData.put("reason", e.getMessage());
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        NatProto.NatMessage sendBackMessage = new NatProto.NatMessage();
-//        sendBackMessage.setMessageHeader(new NatProto.NatMessageHeader(NatProto.NatMessageType.REGISTER_RESULT));
-//        sendBackMessage.setMetaData(metaData);
-//        ctx.writeAndFlush(sendBackMessage);
-//
-//        if (!register) {
-//            System.out.println("com.qingyou.qynat.client.Client register error: " + metaData.get("reason"));
-//            ctx.close();
-//        }
-//    }
-//
-//    /**
-//     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DATA
-//     */
-//    private void processData(NatProto.NatMessage NatProto.NatMessage) {
-//        channels.writeAndFlush(NatProto.NatMessage.getData(), channel -> channel.id().asLongText().equals(NatProto.NatMessage.getMetaData().get("channelId")));
-//    }
-//
-//    /**
-//     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DISCONNECTED
-//     *
-//     * @param NatProto.NatMessage
-//     */
-//    private void processDisconnected(NatProto.NatMessage NatProto.NatMessage) {
-//        channels.close(channel -> channel.id().asLongText().equals(NatProto.NatMessage.getMetaData().get("channelId")));
-//    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -159,9 +67,7 @@ public class QyNatServerHandler extends QyNatCommonHandler {
         }
     }
 
-    /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.REGISTER
-     */
+
     private void processRegister(NatProto.NatMessage natMessage) {
         HashMap<String, String> metaData = new HashMap<>();
 
@@ -169,7 +75,7 @@ public class QyNatServerHandler extends QyNatCommonHandler {
         String addr = natMessage.getMetaDataMap().get("addr");
         if (this.password != null && !this.password.equals(password)) {
             metaData.put("success", "false");
-            metaData.put("reason", "Token is wrong");
+            metaData.put("errMsg", "password is wrong");
         } else {
             int port = Integer.parseInt(natMessage.getMetaDataMap().get("port"));
 
@@ -188,10 +94,10 @@ public class QyNatServerHandler extends QyNatCommonHandler {
                 metaData.put("mapping", addr + ":" + port);
                 this.port = port;
                 register = true;
-                System.out.println("Register success, start QyNat-server on addr: " + addr + ":" + port);
+                System.out.println("Register success, addr: " + addr + ":" + port);
             } catch (Exception e) {
                 metaData.put("success", "false");
-                metaData.put("reason", e.getMessage());
+                metaData.put("errMsg", e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -200,23 +106,17 @@ public class QyNatServerHandler extends QyNatCommonHandler {
         ctx.writeAndFlush(sendBackMessage);
 
         if (!register) {
-            System.out.println("start QyNat-client register error: " + metaData.get("reason"));
+            System.out.println("start QyNat-client register error: " + metaData.get("errMsg"));
             ctx.close();
         }
     }
 
-    /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DATA
-     */
+
     private void processData(NatProto.NatMessage natMessage) {
         channels.writeAndFlush(natMessage.getData().toByteArray(), channel -> channel.id().asLongText().equals(natMessage.getMetaDataMap().get("channelId")));
     }
 
-    /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DISCONNECTED
-     *
-     * @param natMessage
-     */
+
     private void processDisconnected(NatProto.NatMessage natMessage) {
         channels.close(channel -> channel.id().asLongText().equals(natMessage.getMetaDataMap().get("channelId")));
     }

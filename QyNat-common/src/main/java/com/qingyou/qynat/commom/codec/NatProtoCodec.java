@@ -21,8 +21,11 @@ public class NatProtoCodec {
 
     public static NatProto.NatMessage createNatMessage(int id, NatProto.Type type, Map<String, String> metaData, byte[] data) {
         NatProto.NatMessage.Builder builder = NatProto.NatMessage.newBuilder();
-        builder.putAllMetaData(metaData);
-        if(data!=null) {
+        if (metaData != null) {
+            System.out.println(metaData);
+            builder.putAllMetaData(metaData);
+        }
+        if (data != null) {
             builder.setData(ByteString.copyFrom(data));
         }
         builder.setType(type);

@@ -91,7 +91,7 @@ public class QyNatClientHandler extends QyNatCommonHandler {
         if (Boolean.parseBoolean(natMessage.getMetaDataMap().get("success"))) {
             System.out.println("Register to qynat");
         } else {
-            System.out.println("Register fail: " + natMessage.getMetaDataMap().get("reason"));
+            System.out.println("Register fail: " + natMessage.getMetaDataMap().get("errMsg"));
             ctx.close();
         }
     }
@@ -152,7 +152,7 @@ public class QyNatClientHandler extends QyNatCommonHandler {
         QyNatCommonHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {
             ChannelHandlerContext ctx = handler.getCtx();
-            ctx.writeAndFlush(natMessage.getData());
+            ctx.writeAndFlush(natMessage.getData().toByteArray());
         }
     }
 

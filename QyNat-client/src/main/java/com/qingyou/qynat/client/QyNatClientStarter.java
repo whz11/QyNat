@@ -31,42 +31,42 @@ public class QyNatClientStarter {
             formatter.printHelp("options", options);
         } else {
 
-//            String serverAddress = cmd.getOptionValue("server_addr");
-//            if (serverAddress == null) {
-//                System.out.println("server_addr cannot be null");
-//                return;
-//            }
-//            String serverPort = cmd.getOptionValue("server_port");
-//            if (serverPort == null) {
-//                System.out.println("server_port cannot be null");
-//                return;
-//            }
-//            String password = cmd.getOptionValue("password");
-//            String proxyAddress = cmd.getOptionValue("proxy_addr");
-//            if (proxyAddress == null) {
-//                System.out.println("proxy_addr cannot be null");
-//                return;
-//            }
-//            String proxyPort = cmd.getOptionValue("proxy_port");
-//            if (proxyPort == null) {
-//                System.out.println("proxy_port cannot be null");
-//                return;
-//            }
-//            String remotePort = cmd.getOptionValue("remote_port");
-//            if (remotePort == null) {
-//                System.out.println("remote_port cannot be null");
-//                return;
-//            }
+            String serverAddress = cmd.getOptionValue("server_addr");
+            if (serverAddress == null) {
+                System.out.println("server_addr cannot be null");
+                return;
+            }
+            String serverPort = cmd.getOptionValue("server_port");
+            if (serverPort == null) {
+                System.out.println("server_port cannot be null");
+                return;
+            }
+            String password = cmd.getOptionValue("pwd");
+            String proxyAddress = cmd.getOptionValue("proxy_addr");
+            if (proxyAddress == null) {
+                System.out.println("proxy_addr cannot be null");
+                return;
+            }
+            String proxyPort = cmd.getOptionValue("proxy_port");
+            if (proxyPort == null) {
+                System.out.println("proxy_port cannot be null");
+                return;
+            }
+            String remotePort = cmd.getOptionValue("remote_port");
+            if (remotePort == null) {
+                System.out.println("remote_port cannot be null");
+                return;
+            }
 
             QyNatClient client = new QyNatClient();
-            String serverAddress = "localhost";
-            String serverPort = "7777";
-            String password = "123456";
-            String remotePort = "8888";
-            String proxyAddress = "localhost";
-            String proxyPort = "8080";
-            client.connect(serverAddress, serverPort, new QyNatClientHandler(remotePort, password,
-                    proxyAddress, serverAddress, proxyPort));
+//            String serverAddress = "1.116.186.185";
+//            String serverPort = "7777";
+//            String password = "123456";
+//            String remotePort = "8888";
+//            String proxyAddress = "localhost";
+//            String proxyPort = "8080";
+            client.connect(serverAddress, serverPort, remotePort, password,
+                    proxyAddress, proxyPort, QyNatClientHandler.class);
         }
     }
 }

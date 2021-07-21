@@ -9,7 +9,6 @@ import com.qingyou.qynat.client.client.QyNatClient;
 import com.qingyou.qynat.commom.exception.QyNatException;
 import com.qingyou.qynat.gui.listener.DragListener;
 import com.qingyou.qynat.gui.handler.QyNatClientHandler;
-import com.sun.xml.internal.ws.util.StringUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -45,6 +44,14 @@ public class Main extends Application {
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)" +
             ":([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-5]{2}[0-3][0-5])$";
+    private final String init = "                                  \n" +
+            "_|       _|    _|_|    _|_|_|_|_|  \n" +
+            "_|_|    _|  _|     _|       _|      \n" +
+            "_|  _|  _|  _|_|_|_|      _|      \n" +
+            "_|    _|_|  _|      _|      _|      \n" +
+            "_|       _|  _|      _|      _|      \n" +
+            "                                  \n" +
+            "                                  ";
 
     @Override
     public void start(Stage stage) {
@@ -104,10 +111,11 @@ public class Main extends Application {
         pane1.setStyle("-fx-background-color:WHITE;-fx-padding:40;");
 
         javafxTextArea = new TextArea();
-        javafxTextArea.setPromptText("JavaFX Text Area");
+        javafxTextArea.setPromptText("");
         javafxTextArea.setMaxHeight(300);
         javafxTextArea.setMinHeight(300);
         javafxTextArea.setPrefHeight(300);
+        updateTextAreaContentStatic(init);
         pane1.getChildren().add(javafxTextArea);
         root.getChildren().add(pane);
         root.getChildren().add(pane1);
@@ -152,8 +160,8 @@ public class Main extends Application {
                 new Thread(() -> {
                     QyNatClient client = new QyNatClient();
                     try {
-                        client.connect(serverAddress, serverPort, new QyNatClientHandler(remotePort, password,
-                                proxyAddress, serverAddress, proxyPort));
+                        client.connect(serverAddress, serverPort, remotePort, password,
+                                proxyAddress, proxyPort, QyNatClientHandler.class);
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
