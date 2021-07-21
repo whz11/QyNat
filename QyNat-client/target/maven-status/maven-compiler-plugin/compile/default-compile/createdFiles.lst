@@ -1,7 +1,0 @@
-com/qingyou/qynat/client/handler/QyNatClientHandler.class
-com/qingyou/qynat/client/handler/QyNatLocalProxyHandler.class
-com/qingyou/qynat/client/QyNatClientStarter.class
-com/qingyou/qynat/client/client/TcpConnection.class
-com/qingyou/qynat/client/client/QyNatClient.class
-com/qingyou/qynat/client/handler/QyNatClientHandler$1.class
-com/qingyou/qynat/client/client/QyNatClient$1.class
