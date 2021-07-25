@@ -14,6 +14,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,8 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2021/7/16 01:08
  **/
 public class QyNatClientHandler extends QyNatCommonHandler {
+    private static final Logger log = LoggerFactory.getLogger(QyNatClientHandler.class);
+
     private final String port;
-    private final String password;
+    private final String token;
     private final String proxyAddress;
     private final String serverAddress;
     private final String proxyPort;
@@ -32,9 +36,9 @@ public class QyNatClientHandler extends QyNatCommonHandler {
     private ConcurrentHashMap<String, QyNatCommonHandler> channelHandlerMap = new ConcurrentHashMap<>();
     private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    public QyNatClientHandler(String port, String password, String proxyAddress, String serverAddress, String proxyPort) {
+    public QyNatClientHandler(String port, String token, String proxyAddress, String serverAddress, String proxyPort) {
         this.port = port;
-        this.password = password;
+        this.token = token;
         this.proxyAddress = proxyAddress;
         this.serverAddress = serverAddress;
         this.proxyPort = proxyPort;
@@ -45,10 +49,11 @@ public class QyNatClientHandler extends QyNatCommonHandler {
         // register client information
         HashMap<String, String> metaData = new HashMap<>();
         metaData.put("port", port);
-        metaData.put("password", password);
+        if (token != null) {
+            metaData.put("token", token);
+        }
         metaData.put("addr", serverAddress);
         NatProto.NatMessage natMessage = NatProtoCodec.createNatMessage(0, NatProto.Type.REGISTER, metaData, null);
-        System.out.println(natMessage);
         ctx.writeAndFlush(natMessage);
         super.channelActive(ctx);
     }
@@ -59,14 +64,13 @@ public class QyNatClientHandler extends QyNatCommonHandler {
         NatProto.NatMessage natMessage = (NatProto.NatMessage) msg;
         NatProto.Type type = natMessage.getType();
         if (type == NatProto.Type.REGISTER_RESULT) {
-            processRegisterResult(natMessage);
-            System.out.println("注册返回：" + natMessage);
+            handleRegisterResult(natMessage);
         } else if (type == NatProto.Type.CONNECTED) {
-            processConnected(natMessage);
+            handleConnected(natMessage);
         } else if (type == NatProto.Type.DISCONNECTED) {
-            processDisconnected(natMessage);
+            handleDisconnected(natMessage);
         } else if (type == NatProto.Type.DATA) {
-            processData(natMessage);
+            handleData(natMessage);
         } else if (type == NatProto.Type.KEEPALIVE) {
             // 心跳包, 不处理
         } else {
@@ -78,31 +82,26 @@ public class QyNatClientHandler extends QyNatCommonHandler {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         channelGroup.close();
-        System.out.println("Loss connection to QyNat, Please restart!");
+        log.warn("Loss connection to QyNat, Please restart!");
     }
 
     /**
-     * 登录返回
-     *
-     * @param natMessage
-     * @return void
+     * 注册返回
      */
-    private void processRegisterResult(NatProto.NatMessage natMessage) {
+    private void handleRegisterResult(NatProto.NatMessage natMessage) {
         if (Boolean.parseBoolean(natMessage.getMetaDataMap().get("success"))) {
-            System.out.println("Register to qynat");
+            log.info("Register to qynat");
         } else {
-            System.out.println("Register fail: " + natMessage.getMetaDataMap().get("errMsg"));
-            ctx.close();
+            //ctx.close();
+            log.error(("Register qynat fail: " + natMessage.getMetaDataMap().get("errMsg")));
+            System.exit(-1);
         }
     }
 
     /**
      * 连接建立
-     *
-     * @param natMessage
-     * @return void
      */
-    private void processConnected(NatProto.NatMessage natMessage) throws Exception {
+    private void handleConnected(NatProto.NatMessage natMessage) throws Exception {
 
         try {
             QyNatClientHandler thisHandler = this;
@@ -128,11 +127,8 @@ public class QyNatClientHandler extends QyNatCommonHandler {
 
     /**
      * 连接断开
-     *
-     * @param natMessage
-     * @return void
      */
-    private void processDisconnected(NatProto.NatMessage natMessage) {
+    private void handleDisconnected(NatProto.NatMessage natMessage) {
         String channelId = natMessage.getMetaDataMap().get("channelId");
         QyNatCommonHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {
@@ -143,11 +139,8 @@ public class QyNatClientHandler extends QyNatCommonHandler {
 
     /**
      * 传输byte[]
-     *
-     * @param natMessage
-     * @return void
      */
-    private void processData(NatProto.NatMessage natMessage) {
+    private void handleData(NatProto.NatMessage natMessage) {
         String channelId = natMessage.getMetaDataMap().get("channelId");
         QyNatCommonHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {

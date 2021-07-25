@@ -62,13 +62,13 @@ public class QyNatClientHandler extends QyNatCommonHandler {
         NatProto.NatMessage natMessage = (NatProto.NatMessage) msg;
         NatProto.Type type = natMessage.getType();
         if (type == NatProto.Type.REGISTER_RESULT) {
-            processRegisterResult(natMessage);
+            handleRegisterResult(natMessage);
         } else if (type == NatProto.Type.CONNECTED) {
-            processConnected(natMessage);
+            handleConnected(natMessage);
         } else if (type == NatProto.Type.DISCONNECTED) {
-            processDisconnected(natMessage);
+            handleDisconnected(natMessage);
         } else if (type == NatProto.Type.DATA) {
-            processData(natMessage);
+            handleData(natMessage);
         } else if (type == NatProto.Type.KEEPALIVE) {
             // 心跳包, 不处理
         } else {
@@ -84,9 +84,9 @@ public class QyNatClientHandler extends QyNatCommonHandler {
     }
 
     /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.REGISTER_RESULT
+     * 注册返回
      */
-    private void processRegisterResult(NatProto.NatMessage natMessage) {
+    private void handleRegisterResult(NatProto.NatMessage natMessage) {
         Map<String, String> metaData = natMessage.getMetaDataMap();
         if (Boolean.parseBoolean(metaData.get("success"))) {
             Main.updateTextAreaContentStatic("Register to qynat");
@@ -99,9 +99,9 @@ public class QyNatClientHandler extends QyNatCommonHandler {
     }
 
     /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.CONNECTED
+     * 连接建立
      */
-    private void processConnected(NatProto.NatMessage natMessage) throws Exception {
+    private void handleConnected(NatProto.NatMessage natMessage) throws Exception {
 
         try {
             QyNatClientHandler thisHandler = this;
@@ -127,9 +127,9 @@ public class QyNatClientHandler extends QyNatCommonHandler {
     }
 
     /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DISCONNECTED
+     * 连接断开
      */
-    private void processDisconnected(NatProto.NatMessage natMessage) {
+    private void handleDisconnected(NatProto.NatMessage natMessage) {
         QyNatCommonHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {
             handler.getCtx().close();
@@ -138,9 +138,9 @@ public class QyNatClientHandler extends QyNatCommonHandler {
     }
 
     /**
-     * if NatProto.NatMessage.getType() == NatProto.NatMessageType.DATA
+     * 传输byte[]
      */
-    private void processData(NatProto.NatMessage natMessage) {
+    private void handleData(NatProto.NatMessage natMessage) {
         QyNatCommonHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {
             ChannelHandlerContext ctx = handler.getCtx();

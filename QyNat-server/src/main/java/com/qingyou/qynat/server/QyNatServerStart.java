@@ -14,23 +14,20 @@ public class QyNatServerStart {
         Options options = new Options();
         options.addOption("h", false, "Help");
         options.addOption("p", true, "QyNat server port");
-        options.addOption("pwd", true, "QyNat server password");
+        options.addOption("t", true, "QyNat server token");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
         if (cmd.hasOption("h")) {
-            // print help
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("options", options);
         } else {
 
             int port = Integer.parseInt(cmd.getOptionValue("p", "7777"));
-            String password = cmd.getOptionValue("pwd");
-            password="123456";
+            String token = cmd.getOptionValue("t");
             QyNatServer server = new QyNatServer();
-            server.start(port, password);
-
+            server.start(port, token);
             System.out.println("QyNat server started on port " + port);
         }
     }

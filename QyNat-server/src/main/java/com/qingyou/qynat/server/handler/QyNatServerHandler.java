@@ -27,13 +27,13 @@ public class QyNatServerHandler extends QyNatCommonHandler {
 
     private static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    private final String password;
+    private final String token;
     private int port;
 
     private boolean register = false;
 
-    public QyNatServerHandler(String password) {
-        this.password = password;
+    public QyNatServerHandler(String token) {
+        this.token = token;
     }
 
 
@@ -71,11 +71,11 @@ public class QyNatServerHandler extends QyNatCommonHandler {
     private void processRegister(NatProto.NatMessage natMessage) {
         HashMap<String, String> metaData = new HashMap<>();
 
-        String password = natMessage.getMetaDataMap().get("password");
+        String token = natMessage.getMetaDataMap().get("token");
         String addr = natMessage.getMetaDataMap().get("addr");
-        if (this.password != null && !this.password.equals(password)) {
+        if (this.token != null && !this.token.equals(token)) {
             metaData.put("success", "false");
-            metaData.put("errMsg", "password is wrong");
+            metaData.put("errMsg", "token is wrong");
         } else {
             int port = Integer.parseInt(natMessage.getMetaDataMap().get("port"));
 

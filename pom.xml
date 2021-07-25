@@ -13,6 +13,7 @@
         <module>QyNat-common</module>
         <module>QyNat-server</module>
         <module>QyNat-client-GUI</module>
+        <module>QyNat-SpringBoot-starter</module>
     </modules>
 
     <properties>
